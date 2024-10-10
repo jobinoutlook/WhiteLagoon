@@ -14,9 +14,13 @@ namespace WhiteLagoon.Web.Controllers
         private readonly ApplicationDbContext _db;
         private IWebHostEnvironment _hostnvironment;
         private readonly IMapper _mapper;
-        public VillaController(ApplicationDbContext db, IWebHostEnvironment hostenvironment,IMapper mapper)
+
+        private static readonly Random random = new Random();
+        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        public VillaController(ApplicationDbContext db, IWebHostEnvironment hostenvironment, IMapper mapper)
         {
-                _db = db;
+            _db = db;
             _hostnvironment = hostenvironment;
             _mapper = mapper;
         }
@@ -44,30 +48,38 @@ namespace WhiteLagoon.Web.Controllers
                 if (file != null)
                 {
                     string wwwRootPath = _hostnvironment.WebRootPath;
-                    string filename = file.FileName; //Guid.NewGuid().ToString();
+                    string filename = GetRandomText(5) +"_"+ file.FileName; //Guid.NewGuid().ToString();
                     var uploads = Path.Combine(wwwRootPath, "Images", "Villa");
                     var extention = Path.GetExtension(file.FileName);
 
-                    var fullpath = Path.Combine(wwwRootPath, uploads, filename + extention);
+                    var fullpath = Path.Combine(wwwRootPath, uploads, filename);
 
                     using (var fileStreams = new FileStream(fullpath, FileMode.Create))
                     {
                         file.CopyTo(fileStreams);
                     }
 
-                    objVilla.ImageUrl = @"/Images/Villa/" + filename + extention;
+                    objVilla.ImageUrl = @"/Images/Villa/" + filename;
 
                 }
 
                 _db.Villas.Add(objVilla);
                 _db.SaveChanges();
-
-                return RedirectToAction("Index","Villa");
+                TempData["success"] = "Villa created successfully";
+                return RedirectToAction("Index", "Villa");
             }
 
 
             return View(objVilla);
         }
+
+        private string GetRandomText(int length)
+        {
+
+            return new string(Enumerable.Repeat(chars, length)
+                                              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
 
         public IActionResult Update(int villaId)
         {
@@ -99,7 +111,7 @@ namespace WhiteLagoon.Web.Controllers
             //createObj.Price = obj.Price;
 
             //createObj = _mapper.Map<Villa>(objVilla);
-             
+
 
 
             string wwwRootPath = _hostnvironment.WebRootPath;
@@ -116,7 +128,7 @@ namespace WhiteLagoon.Web.Controllers
                     }
                 }
 
-                string filename = file.FileName;
+                string filename = GetRandomText(5) + "_" + file.FileName;
                 var uploads = Path.Combine(wwwRootPath, "Images", "Villa");
                 //var extention = Path.GetExtension(file.FileName);
 
@@ -152,12 +164,34 @@ namespace WhiteLagoon.Web.Controllers
 
 
 
-         }
+        }
 
 
 
-        //public IActionResult Delete(int villaId)
-        //{
-        //}
+        public IActionResult Delete(int villaId)
+        {
+            var villa = _db.Villas.Find(villaId);
+
+            return View(villa);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Villa objVilla)
+        {
+            var objVillaDb = _db.Villas.Find(objVilla.Id);
+            if (objVillaDb != null)
+            {
+                var prevFile = Path.Combine(_hostnvironment.WebRootPath, "Images", "Villa", Path.GetFileName(objVillaDb.ImageUrl));
+                System.IO.File.Delete(prevFile);
+
+                _db.Villas.Remove(objVillaDb);
+                _db.SaveChanges();
+                TempData["success"] = "The Villa has deleted Successfully.";
+                return RedirectToAction("Index");
+            }
+            TempData["error"] = "The Villa could not be deleted";
+            return View(objVilla);
+        }
     }
 }
