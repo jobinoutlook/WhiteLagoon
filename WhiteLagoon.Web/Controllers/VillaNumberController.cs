@@ -8,25 +8,24 @@ using WhiteLagoon.Infrastructure.Data;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WhiteLagoon.Web.ViewModels;
+using WhiteLagoon.Application.Common.Interfaces;
 
 namespace WhiteLagoon.Web.Controllers
 {
     public class VillaNumberController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        private IWebHostEnvironment _hostnvironment;
-        private readonly IMapper _mapper;
+        // private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
         
-        public VillaNumberController(ApplicationDbContext db, IWebHostEnvironment hostenvironment, IMapper mapper)
+        public VillaNumberController(IUnitOfWork unitOfWork)
         {
-            _db = db;
-            _hostnvironment = hostenvironment;
-            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+           
         }
         public IActionResult Index()
         {
-            var villaNumbers = _db.VillaNumbers.Include(u=>u.Villa).ToList();
+            var villaNumbers = _unitOfWork.VillaNumber.GetAll(includeProperties: "Villa").ToList();
             return View(villaNumbers);
         }
 
@@ -35,7 +34,7 @@ namespace WhiteLagoon.Web.Controllers
             VillaNumberVM villaNumberVM = new()
             {
 
-                VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+                VillaList = _unitOfWork.Villa.GetAll().ToList().Select(u => new SelectListItem
                 {
 
                     Text = u.Name,
@@ -60,15 +59,15 @@ namespace WhiteLagoon.Web.Controllers
             {
 
 
-                _db.VillaNumbers.Add(obj.VillaNumber);
-                _db.SaveChanges();
+                _unitOfWork.VillaNumber.Add(obj.VillaNumber);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "VillaNumber created successfully";
                 return RedirectToAction(nameof(Index), nameof(VillaNumber));
             }
 
             
 
-            obj.VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+            obj.VillaList = _unitOfWork.Villa.GetAll().ToList().Select(u => new SelectListItem
             {
 
                 Text = u.Name,
@@ -87,7 +86,7 @@ namespace WhiteLagoon.Web.Controllers
             VillaNumberVM villaNumberVM = new()
             {
 
-                VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+                VillaList = _unitOfWork.Villa.GetAll().ToList().Select(u => new SelectListItem
                 {
 
                     Text = u.Name,
@@ -95,7 +94,7 @@ namespace WhiteLagoon.Web.Controllers
 
 
                 }),
-                VillaNumber = _db.VillaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId)
+                VillaNumber = _unitOfWork.VillaNumber.Get(x => x.Villa_Number == villaNumberId)
 
 
             };
@@ -124,8 +123,8 @@ namespace WhiteLagoon.Web.Controllers
             {
 
 
-                _db.VillaNumbers.Update(villaNumberVM.VillaNumber);
-                _db.SaveChanges();
+                _unitOfWork.VillaNumber.Update(villaNumberVM.VillaNumber);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "VillaNumber updated successfully";
                 return RedirectToAction("Index", "VillaNumber");
             }
@@ -134,7 +133,7 @@ namespace WhiteLagoon.Web.Controllers
            TempData["error"] = "Model state is invalid";
             
 
-            villaNumberVM.VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+            villaNumberVM.VillaList = _unitOfWork.Villa.GetAll().ToList().Select(u => new SelectListItem
             {
 
                 Text = u.Name,
@@ -155,7 +154,7 @@ namespace WhiteLagoon.Web.Controllers
             VillaNumberVM villaNumberVM = new()
             {
 
-                VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+                VillaList = _unitOfWork.Villa.GetAll().ToList().Select(u => new SelectListItem
                 {
 
                     Text = u.Name,
@@ -163,7 +162,7 @@ namespace WhiteLagoon.Web.Controllers
 
 
                 }),
-                VillaNumber = _db.VillaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId)
+                VillaNumber = _unitOfWork.VillaNumber.Get(x => x.Villa_Number == villaNumberId)
 
 
             };
@@ -177,12 +176,12 @@ namespace WhiteLagoon.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(VillaNumberVM objVillaNumber)
         {
-            var objVillaNumberDb = _db.VillaNumbers.Find(objVillaNumber.VillaNumber.Villa_Number);
+            var objVillaNumberDb = _unitOfWork.VillaNumber.Get(u => u.Villa_Number == objVillaNumber.VillaNumber.Villa_Number);//objVillaNumber.VillaNumber.Villa_Number);
             if (objVillaNumberDb != null)
             {
-                
-                _db.VillaNumbers.Remove(objVillaNumberDb);
-                _db.SaveChanges();
+
+                _unitOfWork.VillaNumber.Remove(objVillaNumberDb);
+                _unitOfWork.VillaNumber.Save();
                 TempData["success"] = "The VillaNumber has deleted Successfully.";
                 return RedirectToAction(nameof(Index));
             }

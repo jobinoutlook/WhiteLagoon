@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WhiteLagoon.Domain.Entities;
 
 namespace WhiteLagoon.Application.Common.Interfaces
 {
-    public interface IVillaNumberRepository : IRepository<VillaNumber>
+    public interface IUnitOfWork
     {
-        void Update(VillaNumber entity);
-
-        void Save();
+        IVillaRepository Villa {  get; }
+        IVillaNumberRepository VillaNumber { get; }
     }
 }

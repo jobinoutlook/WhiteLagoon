@@ -17,7 +17,7 @@ namespace WhiteLagoon.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
             builder.Services.AddAutoMapper(typeof(MappingConfig));
-            builder.Services.AddScoped<IVillaRepository, VillaRepository>();
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 
 

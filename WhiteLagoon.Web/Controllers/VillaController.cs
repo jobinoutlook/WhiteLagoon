@@ -15,20 +15,20 @@ namespace WhiteLagoon.Web.Controllers
         //private readonly ApplicationDbContext _db;
         private IWebHostEnvironment _hostnvironment;
         private readonly IMapper _mapper;
-        private readonly IVillaRepository _villaRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
         private static readonly Random random = new Random();
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        public VillaController(IWebHostEnvironment hostenvironment, IMapper mapper,IVillaRepository villaRepository)
+        public VillaController(IWebHostEnvironment hostenvironment, IMapper mapper,IUnitOfWork unitOfWork)
         {
-            _villaRepo = villaRepository;
+            _unitOfWork=unitOfWork;
             _hostnvironment = hostenvironment;
             _mapper = mapper;
         }
         public IActionResult Index()
         {
-            var villas = _villaRepo.GetAll();
+            var villas = _unitOfWork.Villa.GetAll();
             return View(villas);
         }
 
@@ -65,8 +65,8 @@ namespace WhiteLagoon.Web.Controllers
 
                 }
 
-                _villaRepo.Add(objVilla);
-                _villaRepo.Save();
+                _unitOfWork.Villa.Add(objVilla);
+                _unitOfWork.Villa.Save();
                 TempData["success"] = "Villa created successfully";
                 return RedirectToAction("Index", "Villa");
             }
@@ -85,7 +85,7 @@ namespace WhiteLagoon.Web.Controllers
 
         public IActionResult Update(int villaId)
         {
-            Villa? villa = _villaRepo.Get(x => x.Id == villaId);
+            Villa? villa = _unitOfWork.Villa.Get(x => x.Id == villaId);
             if (villa == null)
             {
 
@@ -101,7 +101,7 @@ namespace WhiteLagoon.Web.Controllers
         {
 
 
-            Villa? createObj = _villaRepo.Get(u => u.Id == objVilla.Id);
+            Villa? createObj = _unitOfWork.Villa.Get(u => u.Id == objVilla.Id);
 
 
             //createObj.Author = objVilla.Author;
@@ -152,8 +152,8 @@ namespace WhiteLagoon.Web.Controllers
             try
             {
 
-                _villaRepo.Update(createObj);
-                _villaRepo.Save();
+                _unitOfWork.Villa.Update(createObj);
+                _unitOfWork.Villa.Save();
                 return RedirectToAction("Index");
 
             }
@@ -172,7 +172,7 @@ namespace WhiteLagoon.Web.Controllers
 
         public IActionResult Delete(int villaId)
         {
-            var villa = _villaRepo.Get(u=>u.Id == villaId);
+            var villa = _unitOfWork.Villa.Get(u=>u.Id == villaId);
 
             return View(villa);
         }
@@ -181,14 +181,14 @@ namespace WhiteLagoon.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(Villa objVilla)
         {
-            var objVillaDb = _villaRepo.Get(u=>u.Id==objVilla.Id);
+            var objVillaDb = _unitOfWork.Villa.Get(u=>u.Id==objVilla.Id);
             if (objVillaDb != null)
             {
                 var prevFile = Path.Combine(_hostnvironment.WebRootPath, "Images", "Villa", Path.GetFileName(objVillaDb.ImageUrl));
                 System.IO.File.Delete(prevFile);
 
-                _villaRepo.Remove(objVillaDb);
-                _villaRepo.Save();
+                _unitOfWork.Villa.Remove(objVillaDb);
+                _unitOfWork.Villa.Save();
                 TempData["success"] = "The Villa has deleted Successfully.";
                 return RedirectToAction("Index");
             }
