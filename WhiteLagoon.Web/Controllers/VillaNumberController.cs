@@ -63,7 +63,7 @@ namespace WhiteLagoon.Web.Controllers
                 _db.VillaNumbers.Add(obj.VillaNumber);
                 _db.SaveChanges();
                 TempData["success"] = "VillaNumber created successfully";
-                return RedirectToAction("Index", "VillaNumber");
+                return RedirectToAction(nameof(Index), nameof(VillaNumber));
             }
 
             
@@ -184,7 +184,7 @@ namespace WhiteLagoon.Web.Controllers
                 _db.VillaNumbers.Remove(objVillaNumberDb);
                 _db.SaveChanges();
                 TempData["success"] = "The VillaNumber has deleted Successfully.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             TempData["error"] = "The VillaNumber could not be deleted";
             return View(objVillaNumber);

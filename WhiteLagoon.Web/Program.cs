@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Infrastructure.Data;
+using WhiteLagoon.Infrastructure.Repository;
 
 namespace WhiteLagoon.Web
 {
@@ -15,8 +17,12 @@ namespace WhiteLagoon.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
             builder.Services.AddAutoMapper(typeof(MappingConfig));
-            var app = builder.Build();
+            builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 
+
+
+            var app = builder.Build();
+            
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
