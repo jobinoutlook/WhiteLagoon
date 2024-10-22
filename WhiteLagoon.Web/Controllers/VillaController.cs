@@ -66,7 +66,7 @@ namespace WhiteLagoon.Web.Controllers
                 }
 
                 _unitOfWork.Villa.Add(objVilla);
-                _unitOfWork.Villa.Save();
+                _unitOfWork.Save();
                 TempData["success"] = "Villa created successfully";
                 return RedirectToAction("Index", "Villa");
             }
@@ -153,7 +153,7 @@ namespace WhiteLagoon.Web.Controllers
             {
 
                 _unitOfWork.Villa.Update(createObj);
-                _unitOfWork.Villa.Save();
+                _unitOfWork.Save();
                 return RedirectToAction("Index");
 
             }
@@ -188,7 +188,7 @@ namespace WhiteLagoon.Web.Controllers
                 System.IO.File.Delete(prevFile);
 
                 _unitOfWork.Villa.Remove(objVillaDb);
-                _unitOfWork.Villa.Save();
+                _unitOfWork.Save();
                 TempData["success"] = "The Villa has deleted Successfully.";
                 return RedirectToAction("Index");
             }
