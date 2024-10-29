@@ -7,7 +7,7 @@ using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers
 {
-    [Authorize]
+   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -47,7 +47,7 @@ namespace WhiteLagoon.Web.Controllers
 
         }
 
-        public IActionResult GetVIllasByDate(int nights, DateOnly checkInDate)
+        public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             var villaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
             foreach (var villa in villaList)
@@ -64,7 +64,7 @@ namespace WhiteLagoon.Web.Controllers
                 Nights = nights
             };
 
-            return View(homeVM);
+            return PartialView("_VillaList",homeVM);
         }
         public IActionResult Privacy()
         {
