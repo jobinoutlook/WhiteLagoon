@@ -24,9 +24,5 @@ namespace WhiteLagoon.Infrastructure.Repository
             _db.Update(entity);
         }
 
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
     }
 }

@@ -251,7 +251,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
 
                     b.HasIndex("VillaId");
 
-                    b.ToTable("Amenities");
+                    b.ToTable("Amenities", (string)null);
 
                     b.HasData(
                         new
@@ -358,7 +358,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Villas");
+                    b.ToTable("Villas", (string)null);
 
                     b.HasData(
                         new
@@ -408,7 +408,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
 
                     b.HasIndex("VillaId");
 
-                    b.ToTable("VillaNumbers");
+                    b.ToTable("VillaNumbers", (string)null);
 
                     b.HasData(
                         new

@@ -9,18 +9,18 @@ using WhiteLagoon.Infrastructure.Data;
 
 namespace WhiteLagoon.Infrastructure.Repository
 {
-    public class AmenityRepository : Repository<Amenity>, IAmenityRepository
+    public class BookingRepository : Repository<Booking>, IBookingRepository
     {
         private readonly ApplicationDbContext _db;
 
-        public AmenityRepository(ApplicationDbContext db) : base(db)
+        public BookingRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(Amenity entity)
+        public void Update(Booking entity)
         {
-            _db.Amenities.Update(entity);
+            _db.Bookings.Update(entity);
         }
 
         
