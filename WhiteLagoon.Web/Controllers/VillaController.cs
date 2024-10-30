@@ -8,6 +8,7 @@ using WhiteLagoon.Infrastructure.Data;
 using System.IO;
 using WhiteLagoon.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using NToastNotify;
 
 namespace WhiteLagoon.Web.Controllers
 {
@@ -18,15 +19,17 @@ namespace WhiteLagoon.Web.Controllers
         private IWebHostEnvironment _hostnvironment;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IToastNotification _toastNotification;
 
         private static readonly Random random = new Random();
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        public VillaController(IWebHostEnvironment hostenvironment, IMapper mapper,IUnitOfWork unitOfWork)
+        public VillaController(IWebHostEnvironment hostenvironment, IMapper mapper,IUnitOfWork unitOfWork, IToastNotification toastNotification)
         {
             _unitOfWork=unitOfWork;
             _hostnvironment = hostenvironment;
             _mapper = mapper;
+            _toastNotification = toastNotification;
         }
         public IActionResult Index()
         {
@@ -69,7 +72,8 @@ namespace WhiteLagoon.Web.Controllers
 
                 _unitOfWork.Villa.Add(objVilla);
                 _unitOfWork.Save();
-                TempData["success"] = "Villa created successfully";
+                //TempData["success"] = "Villa created successfully";
+                _toastNotification.AddSuccessToastMessage("Villa created successfully");
                 return RedirectToAction("Index", "Villa");
             }
 
@@ -191,10 +195,12 @@ namespace WhiteLagoon.Web.Controllers
 
                 _unitOfWork.Villa.Remove(objVillaDb);
                 _unitOfWork.Save();
-                TempData["success"] = "The Villa has deleted Successfully.";
+                // TempData["success"] = "The Villa has deleted Successfully.";
+                _toastNotification.AddSuccessToastMessage("Villa removed successfully");
                 return RedirectToAction("Index");
             }
-            TempData["error"] = "The Villa could not be deleted";
+            //TempData["error"] = "The Villa could not be deleted";
+            _toastNotification.AddErrorToastMessage("Villa created successfully");
             return View(objVilla);
         }
     }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using WhiteLagoon.Web.ViewModels;
 using WhiteLagoon.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using NToastNotify;
 
 namespace WhiteLagoon.Web.Controllers
 {
@@ -18,12 +19,12 @@ namespace WhiteLagoon.Web.Controllers
     {
         // private readonly ApplicationDbContext _db;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IToastNotification _toastNotification;
 
-        
-        public VillaNumberController(IUnitOfWork unitOfWork)
+        public VillaNumberController(IUnitOfWork unitOfWork, IToastNotification toastNotification)
         {
             _unitOfWork = unitOfWork;
-           
+           _toastNotification = toastNotification;
         }
         public IActionResult Index()
         {
@@ -63,13 +64,15 @@ namespace WhiteLagoon.Web.Controllers
 
                 _unitOfWork.VillaNumber.Add(obj.VillaNumber);
                 _unitOfWork.Save();
-                TempData["success"] = "VillaNumber created successfully";
+                //TempData["success"] = "VillaNumber created successfully";
+                _toastNotification.AddSuccessToastMessage("Villa created successfully");
                 return RedirectToAction(nameof(Index), nameof(VillaNumber));
             }
 
-            if(!roomNumberExists)
+            if(roomNumberExists)
             {
-                TempData["error"] = "Villa Number already exists";
+                //TempData["error"] = "Villa Number already exists";
+                _toastNotification.AddErrorToastMessage("Villa Number already exists");
             }
             
 
@@ -131,7 +134,8 @@ namespace WhiteLagoon.Web.Controllers
 
                 _unitOfWork.VillaNumber.Update(villaNumberVM.VillaNumber);
                 _unitOfWork.Save();
-                TempData["success"] = "VillaNumber updated successfully";
+                //TempData["success"] = "VillaNumber updated successfully";
+                _toastNotification.AddSuccessToastMessage("VillaNumber updated successfully");
                 return RedirectToAction("Index", "VillaNumber");
             }
 
@@ -188,10 +192,12 @@ namespace WhiteLagoon.Web.Controllers
 
                 _unitOfWork.VillaNumber.Remove(objVillaNumberDb);
                 _unitOfWork.Save();
-                TempData["success"] = "The VillaNumber has deleted Successfully.";
+                // TempData["success"] = "The VillaNumber has deleted Successfully.";
+                _toastNotification.AddSuccessToastMessage("The VillaNumber has deleted Successfully.");
                 return RedirectToAction(nameof(Index));
             }
-            TempData["error"] = "The VillaNumber could not be deleted";
+            //TempData["error"] = "The VillaNumber could not be deleted";
+            _toastNotification.AddErrorToastMessage("The VillaNumber could not be deleted");
             return View(objVillaNumber);
         }
     }
