@@ -17,12 +17,12 @@
                             <input asp-for="@Model.RedirectUrl" hidden />
                             <div asp-validation-summary="ModelOnly" class="text-danger" ></div>
                             <div class="form-floating mb-3">
-                                <input asp-for="@Model.Email" class="form-control" aria-required="true" />
+                                <input asp-for="@Model.Email" class="form-control" aria-required="true" value="jobin@gmail.com"/>
                                 <label asp-for="@Model.Email" class="form-label"></label>
                                 <span asp-validation-for="@Model.Email" class="text-danger"></span>
                             </div>
                             <div class="form-floating mb-3">
-                                <input asp-for="@Model.Password" class="form-control" aria-required="true" />
+                                <input asp-for="@Model.Password" class="form-control" aria-required="true" value="Admin123*"/>
                                 <label asp-for="@Model.Password" class="form-label"></label>
                                 <span asp-validation-for="@Model.Password" class="text-danger"></span>
                             </div>
